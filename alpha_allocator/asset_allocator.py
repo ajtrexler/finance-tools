@@ -11,7 +11,7 @@ import random
 
 
 def allocator(DATA_PATH,RAW_PATH,top_level_cats,
-                    top_level_ratios,bean_plugin):
+                    top_level_ratios):
     # DATA_PATH: persistent directory where data will be stored
     # RAW_PATH: directory where raw CSVs for parsing are located
     LKUP_FILE= "asset_lookup.csv"
@@ -33,8 +33,6 @@ def allocator(DATA_PATH,RAW_PATH,top_level_cats,
                         'realestate':'realestate',
                         'euro':'equity'}
     
-    # TODO: get prices from this and write to beancount entries
-    # TODO: read asset_classes DF, this is persistence layer of lookup DF.
     try:
         asset_lookup = pd.read_csv(os.path.join(DATA_PATH,LKUP_FILE),index_col=0)
     except:
@@ -121,10 +119,22 @@ def allocator(DATA_PATH,RAW_PATH,top_level_cats,
     asset_df.to_csv(os.path.join(DATA_PATH,timestamp+'_assets.csv'))
 
     # TODO: autocomplete on
-    # TODO: write beancount entries to tmp file for copy over.s
     
     return asset_df
 
-    
-    # TODO: save asset_df with timestamped file.
+def beancount_integrator(asset_df,BEAN_PATH):
+    print 'beans!'
+    with open(BEAN_PATH) as f:
+        foo = f.read()  
+    timestamp = datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d')
+    bean_output = ''    
+    for symbol in asset_df['symbol'].unique():
+        if symbol not in ['USD']:
+            ticker_price = asset_df.loc[asset_df['symbol']==symbol]['price'].values[0]
+            line = timestamp + " price" + " {x}".format(x=symbol) + " {t}".format(t=round(ticker_price)) + ' USD\n'
+            bean_output = bean_output + line
+    SAVE_PATH = '/'.join(BEAN_PATH.split('/')[:-1])+'/asset_temp.txt'     
+    with open(SAVE_PATH,'w+') as fid:
+        fid.write(bean_output)
 
+   

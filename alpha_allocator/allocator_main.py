@@ -9,7 +9,7 @@ collect config file location and run the asset allocator
 import ConfigParser
 import argparse
 import os
-from asset_allocator import allocator
+from asset_allocator import allocator,beancount_integrator
 
 def main(args):
     CONFIG_PATH = args.config_file
@@ -19,7 +19,8 @@ def main(args):
     ROOT_ALLOCATOR_PATH = config.get('allocator config','allocator_root')
     top_level_cats = (config.get('allocator config','top_level_categories')).split(',')
     top_level_ratios = [float(x) for x in (config.get('allocator config','top_level_ratios')).split(',')]
-
+    BEAN_PATH = config.get('allocator config','beancount_file')
+    
     # do filesystem stuff, setup directory
     RAWDATA_PATH = os.path.join(ROOT_ALLOCATOR_PATH,'rawdata/')
     DATA_PATH = os.path.join(ROOT_ALLOCATOR_PATH,'data/')
@@ -32,7 +33,7 @@ def main(args):
     asset_df = allocator(DATA_PATH,RAWDATA_PATH,top_level_cats,top_level_ratios)
     
     if args.bean == 'Y':
-        print 'bean stuff'
+        beancount_integrator(asset_df,BEAN_PATH)
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
