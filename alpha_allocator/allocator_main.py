@@ -29,7 +29,10 @@ def main(args):
     if not os.path.isdir(DATA_PATH):
         os.mkdir(DATA_PATH)
     
-    allocator(DATA_PATH,RAWDATA_PATH,top_level_cats,top_level_ratios,args.bean)
+    asset_df = allocator(DATA_PATH,RAWDATA_PATH,top_level_cats,top_level_ratios)
+    
+    if args.bean == 'Y':
+        print 'bean stuff'
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()

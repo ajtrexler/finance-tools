@@ -6,7 +6,7 @@ Created on Tue Oct 30 06:49:36 2018
 """
 import os
 import pandas as pd
-import time
+import datetime
 import random
 
 
@@ -70,7 +70,7 @@ def allocator(DATA_PATH,RAW_PATH,top_level_cats,
     for f in os.listdir(RAW_PATH):
 
         if 'lock' not in f and 'lookup' not in f:
-            print f
+            print f,'detected and parsed'
             data = pd.read_csv(os.path.join(RAW_PATH,f),header=7)
             data.columns = merrill_columns
             cash = float(data.loc[data['Symbol'] == 'Money accounts ']['Value'].values[0].replace('$','').replace(',',''))
@@ -108,20 +108,23 @@ def allocator(DATA_PATH,RAW_PATH,top_level_cats,
     top_view.columns = ['target','current']  
     top_view['delta'] = top_view['target'] - top_view['current']
     total_port_value = asset_df.groupby('top_level')['value'].sum().sum()
-    print total_port_value
     top_view['money to move'] = ((top_view['delta']/100)*total_port_value).round()
 
     # TODO: view of values and percentages, write both of these to a report.
 
-    # save down pie chart or bar chart
+    # TODO: save down pie chart or bar chart
 
-    # asset_lookup.to_csv(os.path.join(DATA_PATH,LKUP_FILE))
+    asset_lookup.to_csv(os.path.join(DATA_PATH,LKUP_FILE))
     print top_view
-    # TODO: save asset_df with timestamped file.
+    timestamp = datetime.datetime.strftime(datetime.datetime.now(),'%Y%m%d')
+    top_view.to_csv(os.path.join(DATA_PATH,timestamp+'_top_view.csv'))
+    asset_df.to_csv(os.path.join(DATA_PATH,timestamp+'_assets.csv'))
+
     # TODO: autocomplete on
     # TODO: write beancount entries to tmp file for copy over.s
-    if bean_plugin == 'Y':
-        print 'do stuff.'
+    
+    return asset_df
+
     
     # TODO: save asset_df with timestamped file.
 
