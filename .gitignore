@@ -1,2 +1,2 @@
-*.pyc
-./agg_finance_tool/*
+**.pyc
+agg_finance_tool/**
