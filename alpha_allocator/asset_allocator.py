@@ -131,7 +131,7 @@ def beancount_integrator(asset_df,BEAN_PATH):
     for symbol in asset_df['symbol'].unique():
         if symbol not in ['USD']:
             ticker_price = asset_df.loc[asset_df['symbol']==symbol]['price'].values[0]
-            line = timestamp + " price" + " {x}".format(x=symbol) + " {t}".format(t=round(ticker_price)) + ' USD\n'
+            line = timestamp + " price" + " {x}".format(x=symbol) + " {t}".format(t=round(ticker_price,2)) + ' USD\n'
             bean_output = bean_output + line
     SAVE_PATH = '/'.join(BEAN_PATH.split('/')[:-1])+'/asset_temp.txt'     
     with open(SAVE_PATH,'w+') as fid:
